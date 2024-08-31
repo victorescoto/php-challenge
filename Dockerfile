@@ -23,10 +23,6 @@ COPY . /var/www/html/
 
 RUN composer install
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-ENTRYPOINT ["entrypoint.sh"]
 CMD ["apache2-foreground"]
 
 EXPOSE 80
