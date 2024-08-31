@@ -1,0 +1,4 @@
+vendor/
+*.cache
+.vscode
+.env

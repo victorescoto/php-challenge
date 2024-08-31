@@ -1,0 +1,74 @@
+services:
+  app:
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/html
+      - ./compose/:/etc/apache2/sites-available/
+    ports:
+      - "8000:80"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS-:mypass}
+      MYSQL_DATABASE: ${DB_DATABASE:-databasename}
+      MYSQL_USER: ${DB_USER:-myuser}
+      MYSQL_PASSWORD: ${DB_PASS:-mypass}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "${MAIL_PORT:-1025}:1025"
+      - "${MAIL_HTTP_PORT:-8025}:8025"
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${MESSAGE_BROKER_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${MESSAGE_BROKER_PASS:-guest}
+    ports:
+      - "${MESSAGE_BROKER_PORT:-5672}:5672"
+      - "${MESSAGE_BROKER_HTTP_PORT:-15672}:15672"
+    networks:
+      - app-network
+
+  queue-consumer:
+    build:
+      context: .
+    command: php bin/console app:queue-consumer
+    depends_on:
+      - app
+      - rabbitmq
+      - mailhog
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:

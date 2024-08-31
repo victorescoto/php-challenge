@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+
+use App\Commands\QueueConsumerCommand;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+
+$app = require_once __DIR__ . '/../bootstrap.php';
+
+/** @var \Slim\Container $container */
+$container = $app->getContainer();
+
+/** @var EntityManager $entityManager */
+$entityManager = $container->get(EntityManager::class);
+
+ConsoleRunner::run(
+    entityManagerProvider: new SingleManagerProvider($entityManager),
+    commands: [
+        $container->get(QueueConsumerCommand::class),
+    ]
+);
