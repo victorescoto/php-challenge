@@ -1,7 +1,7 @@
 
-# Jobsity Slim Challenge
+# Slim Challenge
 
-This project is a PHP application built with the Slim framework, designed for a challenge by Jobsity. It includes various dependencies and utilizes Docker for containerization.
+This project is a PHP application built with the Slim framework and designed for a challenge. It includes various dependencies and utilizes Docker for containerization.
 
 ## Requirements
 
