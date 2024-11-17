@@ -19,9 +19,9 @@ class JWTService
     {
         $time = time();
         $payload = [
-            'iat' => $time, // Hora em que o token foi gerado
-            'nbf' => $time, // Hora em que o token se torna válido
-            'exp' => $time + 3600, // Tempo de expiração do token (1 hora)
+            'iat' => $time,
+            'nbf' => $time,
+            'exp' => $time + 3600,
             'data' => [
                 'email' => $email
             ]
